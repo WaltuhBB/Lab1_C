@@ -6,27 +6,32 @@
 
 int find_substr(char* str, char* substr){
 
-    bool flag = false;
+    int res = -1;
 
     int i = 0;
     int j = 0;
 
-    while (str[i] != '\0' && !(flag == true && substr[j] == '\0')){
+    for (i = 0; (str[i] != '\0') && (substr[j] != '\0'); i++){
 
-        if (substr[j] == str[i]){
-            flag = true;
+        if (str[i] == substr[j]){
+            j++;
         }
-
-        if (substr[j] == '\0'){
+        else {
             j = 0;
         }
-
-        i++;
-        j++;
-
+    
     }
 
-    return i;
+    if (substr[j] == '\0'){
+        res = i;
+
+        if (str[i] != '\0'){
+            res--;
+        }
+    }
+    
+    return res;
+
 }
 
 int main()
