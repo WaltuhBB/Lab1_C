@@ -40,8 +40,17 @@ int main()
     char p[P_LEN] = "abc bbc abcdd.\0";
     char w[W_LEN] = "abc\0";
 
-    int a = find_substr(p, w);
-    printf("%d", a);
+    int i = 0;
+    int cnt = 0;
+
+    while (p[i] != '\0' && find_substr(&p[i], w) != -1){
+
+        cnt++;
+        i = find_substr(&p[i], w) + i;
+
+    }
+
+    printf("%d", cnt);
 
     return 0;
 }
