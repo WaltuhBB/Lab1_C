@@ -2,16 +2,17 @@
 #include <stdbool.h>
 
 #define W_LEN 4
-#define P_LEN 15
+#define P_LEN 22 // 15
 
-int find_substr(char* str, char* substr){
+int find_substr(char* str, char* substr, int* len){
 
     int res = -1;
 
     int i = 0;
     int j = 0;
 
-    for (i = 0; (str[i] != '\0') && (substr[j] != '\0'); i++){
+    // добавил && str[i] != '.'
+    for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0'); i++){
 
         if (str[i] == substr[j]){
             j++;
@@ -25,10 +26,13 @@ int find_substr(char* str, char* substr){
     if (substr[j] == '\0'){
         res = i;
 
-        if (str[i] != '\0'){
+        // добавил && str[i] != '.'
+        if (str[i] != '\0' && str[i] != '.'){
             res--;
         }
     }
+
+    *len = j;
     
     return res;
 
@@ -37,16 +41,23 @@ int find_substr(char* str, char* substr){
 int main()
 {
 
-    char p[P_LEN] = "abc bbc abcdd.\0";
+    char p[P_LEN] = "abcc bbc abc abc. abc\0";
     char w[W_LEN] = "abc\0";
 
     int i = 0;
     int cnt = 0;
 
-    while (p[i] != '\0' && find_substr(&p[i], w) != -1){
+    int len;
 
-        cnt++;
-        i = find_substr(&p[i], w) + i;
+    // убрал (p[i] != '\0' && p[i] != '.') &&
+    while (find_substr(&p[i], w, &len) != -1){
+
+        if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
+            cnt++;
+        }
+            
+        i = find_substr(&p[i], w, &len) + i;
+        
 
     }
 
