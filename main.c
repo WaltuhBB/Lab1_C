@@ -44,8 +44,21 @@ int main()
 {
 
     unsigned char P[LEN_P] = "1231214124\0";
+    int res = div4(P);
 
-    printf("%d ", div4(P));
+    if (res != -1){
+
+        if (res){
+            printf("You can devide this number by 4 ");
+        }
+        else{
+            printf("You can't devide this number by 4 ");
+        }
+
+    }
+    else{
+        printf("String is not a number or the pointer is empty ");
+    }
 
     return 0;
 }
