@@ -1,44 +1,51 @@
 #include <stdio.h>
+#include <stdbool.h>
 
-#define LEN_S 11
+#define LEN_P 11
+
+int div4(char* str){
+
+    int res = -1;
+
+    if (str != NULL){
+
+        bool flag_num = true;
+
+        int i;
+
+        for (i = 0; str[i] != '\0'; i++){
+
+            if (str[i] < '0' || str[i] > '9'){
+                flag_num = false;
+            }
+
+        }
+
+        if (flag_num){
+
+            if (((str[i-1] - '0') + (str[i-2] - '0')*10) % 4 == 0){
+
+                res = 1;
+
+            }
+            else{
+                res = 0;
+            }
+
+        }
+
+    }
+
+    return res;
+
+}
 
 int main()
 {
 
-    char P[LEN_S] = "1231214124\0";
+    char P[LEN_P] = "1231214124\0";
 
-    int flag_num = 1;
-
-    int i;
-
-    //check if string is a number
-    for (i = 0; P[i] != '\0'; i++){
-
-        if (P[i] > '9' || P[i] < '0'){
-
-            flag_num = 0;
-            P[i] = 0;
-
-        }
-
-    }
-
-
-    //check if number divivsible by 4
-    if (flag_num){
-        int check = (P[i-1] - '0') + (P[i-2] - '0')*10;
-
-        if (check % 4 == 0){
-            printf("You can devide this number by 4");
-        }
-        else{
-            printf("You cant devide this number by 4");
-        }
-
-    }
-    else{
-        printf("String in not a number");
-    }
+    printf("%d ", div4(P));
 
     return 0;
 }
