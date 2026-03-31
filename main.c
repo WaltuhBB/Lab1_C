@@ -3,7 +3,7 @@
 
 #define LEN_P 11
 
-int div4(char* str){
+int div4(unsigned char* str){
 
     int res = -1;
 
@@ -43,7 +43,7 @@ int div4(char* str){
 int main()
 {
 
-    char P[LEN_P] = "1231214124\0";
+    unsigned char P[LEN_P] = "1231214124\0";
 
     printf("%d ", div4(P));
 
