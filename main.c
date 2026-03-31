@@ -59,25 +59,31 @@ int main()
     unsigned char p[P_LEN] = "abcа bbc abc abc. abc\0"; // после 'c' 'а' русская
     unsigned char w[W_LEN] = "abc\0";
 
-    int i = 0;
-    int cnt = 0;
-
     int len;
 
-    int res = find_substr(p, w, &len);
+    if (find_substr(p, w, &len) != -2){
 
-    // убрал (p[i] != '\0' && p[i] != '.') &&
-//    while (find_substr(&p[i], w, &len) != -1){
-//
-//        if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
-//            cnt++;
-//        }
-//
-//        i = find_substr(&p[i], w, &len) + i;
-//
-//    }
+        int i = 0;
+        int cnt = 0;
 
-    printf("%d %d", res, len);
+        while (find_substr(&p[i], w, &len) != -1){
+
+            if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
+                cnt++;
+            }
+
+            i = find_substr(&p[i], w, &len) + i;
+
+        }
+
+        printf("words found: %d ", cnt);
+
+    }
+    else{
+        printf("Not an ascii string or NULL pointer ");
+    }
+
+
 
     return 0;
 }
