@@ -61,29 +61,31 @@ int main()
 
     int len;
 
-    if (find_substr(p, w, &len) != -2){
+    int i = 0;
+    int cnt = 0;
 
-        int i = 0;
-        int cnt = 0;
+    bool flag = false;
 
-        while (find_substr(&p[i], w, &len) != -1){
+    while (find_substr(&p[i], w, &len) != -1 && !flag){
 
-            if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
-                cnt++;
-            }
-
-            i = find_substr(&p[i], w, &len) + i;
-
+        if (find_substr(&p[i], w, &len) == -2){
+            flag = true;
         }
 
-        printf("words found: %d ", cnt);
+        if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
+            cnt++;
+        }
 
+        i = find_substr(&p[i], w, &len) + i;
+
+    }
+
+    if (!flag){
+        printf("%d", cnt);
     }
     else{
-        printf("Not an ascii string or NULL pointer ");
+        printf("Not an ascii letters or NULL pointer");
     }
-
-
 
     return 0;
 }
