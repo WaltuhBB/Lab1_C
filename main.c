@@ -19,17 +19,8 @@ int main()
 
         if (words[i] == ' ' || words[i] == ',' || words[i] == '.'){
 
-            if (words[i] == '.'){
+            if (words[i] != '.'){
                 
-                buffer[j+1] = '\0';
-                j = 0;
-
-                printf("%s\n", buffer);
-
-                flag = true;
-            }
-            else{
-
                 buffer[j+1] = '\0';
                 j = 0;
 
@@ -39,6 +30,19 @@ int main()
                     i++;
 
                 }
+
+            }
+            else{
+
+                if (words[i-1] != ' ' && words[i-1] != ','){
+
+                    buffer[j+1] = '\0';
+                    j = 0;
+
+                    printf("%s\n", buffer);
+                }
+                
+                flag = true;
 
             }
 
