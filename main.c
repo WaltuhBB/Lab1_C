@@ -94,7 +94,7 @@ int count_words(unsigned char* p, unsigned char* w){
 int main()
 {
     
-    unsigned char words[LEN] = "cbc cba, bbc,ccb abc, abcd . ddc\0";
+    unsigned char words[LEN] = "abc abc, bbc,ccb abc, abcd . ddc\0";
 
     int i = 0;
     int j = 0;
@@ -112,7 +112,9 @@ int main()
                 buffer[j+1] = '\0';
                 j = 0;
 
-                printf("%s\n", buffer);
+                if (count_words(words, buffer) == 1){
+                    printf("%s\n", buffer);
+                }
 
                 while (words[i] == ' ' || words[i] == ','){
                     i++;
@@ -127,7 +129,10 @@ int main()
                     buffer[j+1] = '\0';
                     j = 0;
 
-                    printf("%s\n", buffer);
+                    if (count_words(words, buffer) == 1){
+                        printf("%s\n", buffer);
+                    }
+                
                 }
                 
                 flag = true;
