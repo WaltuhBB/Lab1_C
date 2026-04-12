@@ -1,28 +1,45 @@
 #include <stdio.h>
+#include <stdbool.h>
 
 #define LEN 33
 
 int main()
 {
     
-    char words[LEN] = "abc cba, bbc,ccb abc, abcd. ddc\0";
+    char words[LEN] = "cbc cba, bbc,ccb abc, abcd. ddc\0";
 
     int i = 0;
     int j = 0;
 
     char buffer[1000] = {'0'};
 
-    while (words[i] != '\0' && words[i] != '.'){
+    bool flag = false;
 
-        if (words[i] == ' ' || words[i] == ','){
+    while (words[i] != '\0' && !flag){
 
-            buffer[j+1] = '\0';
-            j = 0;
+        if (words[i] == ' ' || words[i] == ',' || words[i] == '.'){
 
-            printf("%s\n", buffer);
+            if (words[i] == '.'){
+                
+                buffer[j+1] = '\0';
+                j = 0;
 
-            while (words[i] == ' ' || words[i] == ','){
-                i++;
+                printf("%s\n", buffer);
+
+                flag = true;
+            }
+            else{
+
+                buffer[j+1] = '\0';
+                j = 0;
+
+                printf("%s\n", buffer);
+
+                while (words[i] == ' ' || words[i] == ','){
+                    i++;
+
+                }
+
             }
 
         }
