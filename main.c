@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 #define W_LEN 4
-#define P_LEN 24 // 22
+#define P_LEN 22 // 24
 
 int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
@@ -15,7 +15,6 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
         int i = 0;
         int j = 0;
 
-        // добавил && str[i] != '.'
         for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && (str[i] <= 127) && (substr[j] <= 127); i++){
 
             if (str[i] == substr[j]){
@@ -37,7 +36,6 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
             if (substr[j] == '\0'){
                 res = i;
 
-                // добавил && str[i] != '.'
                 if (str[i] != '\0' && str[i] != '.'){
                     res--;
                 }
@@ -56,7 +54,9 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 int main()
 {
 
-    unsigned char p[P_LEN] = "abcа bbc abc abc. abc\0"; // после 'c' 'а' русская
+    //unsigned char p[P_LEN] = "abcd bbc abф abc. abc\0";
+
+    unsigned char p[P_LEN] = "abcd bbc abc abc. abc\0";
     unsigned char w[W_LEN] = "abc\0";
 
     int len;
