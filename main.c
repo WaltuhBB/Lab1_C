@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define LEN 34
+#define LEN 34 //35
 
 int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
@@ -93,8 +93,8 @@ int count_words(unsigned char* p, unsigned char* w){
 
 int main()
 {
-    
     unsigned char words[LEN] = "abc abc, bbc,ccb abc, abcd . ddc\0";
+    //unsigned char words[LEN] = "abc abc, bbc,ccb фbc, abcd . ddc\0";
 
     int i = 0;
     int j = 0;
@@ -102,8 +102,9 @@ int main()
     unsigned char buffer[1000] = {'0'};
 
     bool flag = false;
+    bool non_ascii = false;
 
-    while (!flag){
+    while (!flag && !non_ascii){
 
         if (words[i] == ' ' || words[i] == ',' || words[i] == '.' || words[i] == '\0'){
 
@@ -112,13 +113,20 @@ int main()
                 buffer[j+1] = '\0';
                 j = 0;
 
-                if (count_words(words, buffer) == 1){
-                    printf("%s\n", buffer);
+                int res = count_words(words, buffer);
+
+                if (res != -2){
+                    if (res == 1){
+                        printf("%s\n", buffer);
+                    }
+
+                    while (words[i] == ' ' || words[i] == ','){
+                        i++;
+
+                    }
                 }
-
-                while (words[i] == ' ' || words[i] == ','){
-                    i++;
-
+                else{
+                    non_ascii = true;
                 }
 
             }
@@ -128,9 +136,16 @@ int main()
 
                     buffer[j+1] = '\0';
                     j = 0;
+                    
+                    int res = count_words(words, buffer);
 
-                    if (count_words(words, buffer) == 1){
-                        printf("%s\n", buffer);
+                    if (res != -2){
+                        if (res == 1){
+                            printf("%s\n", buffer);
+                        }
+                    }
+                    else{
+                        non_ascii = true;
                     }
                 
                 }
@@ -149,7 +164,9 @@ int main()
 
     }
 
-    printf("algorithm finished");
+    if (non_ascii){
+        printf("Non ascii letters or a NULL pointer");
+    }
     
     return 0;
 
