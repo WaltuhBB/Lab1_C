@@ -75,6 +75,8 @@ int main()
 
     int res = find_substr(p, w, &len);
 
+    //int res = find_substr(NULL, w, &len);
+
     while (res != -1 && !flag){
 
         if (res == -2){
