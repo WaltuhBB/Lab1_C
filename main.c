@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define W_LEN 4
-#define P_LEN 22 // 24
+#define W_LEN 4 // 5
+#define P_LEN 22 // 23
 
 int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
@@ -15,7 +15,13 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
         int i = 0;
         int j = 0;
 
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && (str[i] <= 127) && (substr[j] <= 127); i++){
+        bool flag = false;
+
+        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && !flag; i++){
+
+            if (str[i] > 127 || substr[j] > 127){
+                flag = true;
+            }
 
             if (str[i] == substr[j]){
                 j++;
@@ -26,7 +32,7 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
         }
 
-        if (str[i] > 127 || str[j] > 127){
+        if (flag){
 
             res = -2;
 
@@ -55,6 +61,7 @@ int main()
 {
 
     //unsigned char p[P_LEN] = "abcd bbc abф abc. abc\0";
+    //unsigned char w[W_LEN] = "aфc\0";
 
     unsigned char p[P_LEN] = "abcd bbc abc abc. abc\0";
     unsigned char w[W_LEN] = "abc\0";
@@ -66,25 +73,29 @@ int main()
 
     bool flag = false;
 
-    while (find_substr(&p[i], w, &len) != -1 && !flag){
+    int res = find_substr(p, w, &len);
 
-        if (find_substr(&p[i], w, &len) == -2){
+    while (res != -1 && !flag){
+
+        if (res == -2){
             flag = true;
         }
 
-        if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' '){
+        if (p[res + i + 1] == ' ' || p[res + i - len - 1] == ' '){
             cnt++;
         }
 
-        i = find_substr(&p[i], w, &len) + i;
+        i = res + i;
+
+        res = find_substr(&p[i], w, &len);
 
     }
 
     if (!flag){
-        printf("%d", cnt);
+        printf("Words found: %d ", cnt);
     }
     else{
-        printf("Not an ascii letters or NULL pointer");
+        printf("Not an ascii letters or a NULL pointer ");
     }
 
     return 0;
