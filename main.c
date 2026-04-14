@@ -14,7 +14,13 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
         int i = 0;
         int j = 0;
 
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && (str[i] <= 127) && (substr[j] <= 127); i++){
+        bool flag = false;
+
+        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && !flag; i++){
+
+            if (str[i] > 127 || str[j] > 127){
+                flag = true;
+            }
 
             if (str[i] == substr[j]){
                 j++;
@@ -25,7 +31,7 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
         }
 
-        if (str[i] > 127 || str[j] > 127){
+        if (flag){
 
             res = -2;
 
@@ -63,18 +69,22 @@ int count_words(unsigned char* p, unsigned char* w){
 
         bool flag = false;
 
-        while (find_substr(&p[i], w, &len) != -1 && !flag){
+        int res_substr = find_substr(p, w, &len);
 
-            if (find_substr(&p[i], w, &len) == -2){
+        while (res_substr != -1 && !flag){
+
+            if (res_substr == -2){
                 flag = true;
             }
 
-            if (p[find_substr(&p[i], w, &len) + i + 1] == ' ' || p[find_substr(&p[i], w, &len) + i - len - 1] == ' ' ||
-                p[find_substr(&p[i], w, &len) + i + 1] == ',' || p[find_substr(&p[i], w, &len) + i - len - 1] == ','){
+            if (p[res_substr + i + 1] == ' ' || p[res_substr + i - len - 1] == ' ' ||
+                p[res_substr + i + 1] == ',' || p[res_substr + i - len - 1] == ','){
                 cnt++;
             }
 
-            i = find_substr(&p[i], w, &len) + i;
+            i = res_substr + i;
+
+            res_substr = find_substr(&p[i], w, &len);
 
         }
 
@@ -165,7 +175,7 @@ int main()
     }
 
     if (non_ascii){
-        printf("Non ascii letters or a NULL pointer");
+        printf("Non ascii letters or a NULL pointer ");
     }
     
     return 0;
