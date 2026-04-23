@@ -17,7 +17,7 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
         bool flag = false;
 
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && !flag; i++){
+        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0' && substr[j] != '.') && !flag; i++){
 
             if (str[i] > 127 || substr[j] > 127){
                 flag = true;
@@ -40,11 +40,10 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
         else{
 
             if (substr[j] == '\0'){
+                
                 res = i;
-
-                if (str[i] != '\0' && str[i] != '.'){
-                    res--;
-                }
+                res--;
+                
             }
 
         }
@@ -63,41 +62,47 @@ int main()
     //unsigned char p[P_LEN] = "abcd bbc abф abc. abc\0";
     //unsigned char w[W_LEN] = "aфc\0";
 
-    unsigned char p[P_LEN] = "abcd bbc abc abc. abc\0";
-    unsigned char w[W_LEN] = "abc\0";
+    //unsigned char p[P_LEN] = "abcd bbc abc abc. abc\0";
+    //unsigned char w[W_LEN] = "abc\0";
+
+    unsigned char str[12] = "bbc abc ddc\0";
+    //unsigned char str[12] = "abc bbc ddc\0";
+    //unsigned char str[12] = "bbc ddc abc\0";
+    //unsigned char str[4] = "abc\0";
+    //unsigned char str[5] = "abc \0";
+    //unsigned char str[5] = " abc\0";
+
+    unsigned char substr[4] = "abc\0";
 
     int len;
 
-    int i = 0;
-    int cnt = 0;
+    int res = find_substr(str, substr, &len);
+    
+    int begin = res - len + 1;
+    int end = res;
 
-    bool flag = false;
-
-    int res = find_substr(p, w, &len);
-
-    //int res = find_substr(NULL, w, &len);
-
-    while (res != -1 && !flag){
-
-        if (res == -2){
-            flag = true;
+    if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.')){
+        printf("begin = %d\nend = %d\n", begin, end);
+        printf("%c %c", str[begin], str[end]);
+    }
+    
+    if (str[begin-1] == ' ' || str[end+1] == ' '){
+        
+        if (begin == 0){
+            printf("begin = %d\nend = %d\n", begin, end);
+            printf("%c %c", str[begin], str[end]);
         }
 
-        if (p[res + i + 1] == ' ' || p[res + i - len - 1] == ' '){
-            cnt++;
+        if (str[end+1] == '.' || str[end+1] == '\0'){
+            printf("begin = %d\nend = %d\n", begin, end);
+            printf("%c %c", str[begin], str[end]);
         }
 
-        i = res + i;
+        if (str[begin-1] == ' ' && str[end+1] == ' '){
+            printf("begin = %d\nend = %d\n", begin, end);
+            printf("%c %c", str[begin], str[end]);
+        }
 
-        res = find_substr(&p[i], w, &len);
-
-    }
-
-    if (!flag){
-        printf("Words found: %d ", cnt);
-    }
-    else{
-        printf("Not an ascii letters or a NULL pointer ");
     }
 
     return 0;
