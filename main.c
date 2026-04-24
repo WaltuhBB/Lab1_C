@@ -2,7 +2,7 @@
 #include <stdbool.h>
 
 #define W_LEN 4 // 5
-#define P_LEN 22 // 23
+#define P_LEN 27 // 23
 
 int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
@@ -59,24 +59,27 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 int main()
 {
 
-    //unsigned char p[P_LEN] = "abcd bbc abф abc. abc\0";
-    //unsigned char w[W_LEN] = "aфc\0";
+    //unsigned char str[P_LEN] = "abcd bbc abф abc. abc\0";
+    //unsigned char substr[W_LEN] = "aфc\0";
 
-    //unsigned char p[P_LEN] = "abcd bbc abc abc. abc\0";
-    //unsigned char w[W_LEN] = "abc\0";
+    unsigned char str[P_LEN] = "abcd abcd bbc abc abc. abc\0";
+    unsigned char substr[W_LEN] = "abc\0";
 
-    unsigned char str[12] = "bbc abc ddc\0";
+    //unsigned char str[12] = "bbc abc ddc\0";
     //unsigned char str[12] = "abc bbc ddc\0";
     //unsigned char str[12] = "bbc ddc abc\0";
     //unsigned char str[4] = "abc\0";
     //unsigned char str[5] = "abc \0";
     //unsigned char str[5] = " abc\0";
 
-    unsigned char substr[4] = "abc\0";
+    //unsigned char substr[4] = "abc\0";
 
     int len;
 
-    int res = find_substr(str, substr, &len);
+    int i = 16;
+
+    int res = find_substr(&(str[i]), substr, &len) + i;
+    printf("%d\n", res);
     
     int begin = res - len + 1;
     int end = res;
