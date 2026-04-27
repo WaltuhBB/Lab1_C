@@ -59,6 +59,8 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 int main()
 {
 
+    //unsigned char str[1] = "\0";
+
     //unsigned char str[P_LEN] = "abcd bbc abф abc. abc\0";
     //unsigned char substr[W_LEN] = "aфc\0";
 
@@ -76,36 +78,54 @@ int main()
 
     int len;
 
-    int i = 16;
+    int i = 0;
+    int cnt = 0;
+    bool flag = false;
 
-    int res = find_substr(&(str[i]), substr, &len) + i;
-    printf("%d\n", res);
+    int res = find_substr(str, substr, &len);
     
     int begin = res - len + 1;
     int end = res;
 
-    if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.')){
-        printf("begin = %d\nend = %d\n", begin, end);
-        printf("%c %c", str[begin], str[end]);
+    if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.') && res != -1){
+        cnt++;
     }
     
-    if (str[begin-1] == ' ' || str[end+1] == ' '){
+    while (res != -1 && !flag){
+   
+        if (res == -2){
+            flag = true;
+        }
+
+        begin = res - len + 1 + i;
+        end = res + i;
         
-        if (begin == 0){
-            printf("begin = %d\nend = %d\n", begin, end);
-            printf("%c %c", str[begin], str[end]);
+        if (str[begin-1] == ' ' || str[end+1] == ' '){
+        
+            if (str[begin-1] == ' ' && str[end+1] == ' '){
+                cnt++;
+            }
+
+            if (begin == 0){
+                cnt++;
+            }
+
+            if (str[end+1] == '.' || str[end+1] == '\0'){
+                cnt++;
+            }
+
         }
 
-        if (str[end+1] == '.' || str[end+1] == '\0'){
-            printf("begin = %d\nend = %d\n", begin, end);
-            printf("%c %c", str[begin], str[end]);
-        }
+        i = res + i;
+        res = find_substr(&str[i], substr, &len);
 
-        if (str[begin-1] == ' ' && str[end+1] == ' '){
-            printf("begin = %d\nend = %d\n", begin, end);
-            printf("%c %c", str[begin], str[end]);
-        }
+    }
 
+    if (!flag){
+        printf("Words found: %d", cnt);
+    }
+    else{
+        printf("Non ascii or a NULL pointer");
     }
 
     return 0;
