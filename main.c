@@ -16,9 +16,9 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
         bool flag = false;
 
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0') && !flag; i++){
+        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0' && substr[j] != '.') && !flag; i++){
 
-            if (str[i] > 127 || str[j] > 127){
+            if (str[i] > 127 || substr[j] > 127){
                 flag = true;
             }
 
@@ -39,11 +39,10 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
         else{
 
             if (substr[j] == '\0'){
+                
                 res = i;
-
-                if (str[i] != '\0' && str[i] != '.'){
-                    res--;
-                }
+                res--;
+                
             }
 
         }
@@ -56,35 +55,58 @@ int find_substr(unsigned char* str, unsigned char* substr, int* len){
 
 }
 
-int count_words(unsigned char* p, unsigned char* w){
+int count_words(unsigned char* str, unsigned char* substr){
 
     int res = -2;
 
-    if (p != NULL && w != NULL){
+    if (str != NULL && substr != NULL){
 
         int len;
 
         int i = 0;
         int cnt = 0;
-
         bool flag = false;
 
-        int res_substr = find_substr(p, w, &len);
+        int res_f = find_substr(str, substr, &len);
+    
+        int begin = res_f - len + 1;
+        int end = res_f;
 
-        while (res_substr != -1 && !flag){
-
-            if (res_substr == -2){
+        if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.') && res != -1){
+            cnt++;
+        }
+    
+        while (res_f != -1 && !flag){
+   
+            if (res_f == -2){
                 flag = true;
             }
 
-            if (p[res_substr + i + 1] == ' ' || p[res_substr + i - len - 1] == ' ' ||
-                p[res_substr + i + 1] == ',' || p[res_substr + i - len - 1] == ','){
-                cnt++;
+            begin = res_f - len + 1 + i;
+            end = res_f + i;
+        
+            if (str[begin-1] == ' ' || str[end+1] == ' ' ||
+                str[begin-1] == ',' || str[end+1] == ','){
+        
+                bool bool_b = str[begin-1] == ' ' || str[begin-1] == ',';
+                bool bool_e = str[end+1] == ' ' || str[end+1] == ',';
+                
+                if (bool_b && bool_e){
+                    cnt++;
+                }
+
+                if (begin == 0){
+                    cnt++;
+                }
+
+                if (str[end+1] == '.' || str[end+1] == '\0'){
+                    cnt++;
+                }
+
             }
 
-            i = res_substr + i;
-
-            res_substr = find_substr(&p[i], w, &len);
+            i = res_f + i;
+            res_f = find_substr(&str[i], substr, &len);
 
         }
 
@@ -109,7 +131,7 @@ int main()
     int i = 0;
     int j = 0;
 
-    unsigned char buffer[1000] = {'0'};
+    unsigned char buffer[1000] = {0};
 
     bool flag = false;
     bool non_ascii = false;
