@@ -127,6 +127,7 @@ int main()
 {
     unsigned char words[LEN] = "abc abc, bbc,ccb abc, abcd . ddc\0";
     //unsigned char words[LEN] = "abc abc, bbc,ccb фbc, abcd . ddc\0";
+    //unsigned char words[1] = "\0";
 
     int i = 0;
     int j = 0;
