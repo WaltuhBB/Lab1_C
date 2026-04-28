@@ -67,13 +67,6 @@ int main()
     unsigned char str[P_LEN] = "abcd abcd bbc abc abc. abc\0";
     unsigned char substr[W_LEN] = "abc\0";
 
-    //unsigned char str[12] = "bbc abc ddc\0";
-    //unsigned char str[12] = "abc bbc ddc\0";
-    //unsigned char str[12] = "bbc ddc abc\0";
-    //unsigned char str[4] = "abc\0";
-    //unsigned char str[5] = "abc \0";
-    //unsigned char str[5] = " abc\0";
-
     //unsigned char substr[4] = "abc\0";
 
     int len;
