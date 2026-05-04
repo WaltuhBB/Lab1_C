@@ -21,6 +21,10 @@ int div4(unsigned char* str){
 
         }
 
+        if (i == 0){
+            flag_num = false;
+        }
+
         if (flag_num){
 
             if (((str[i-1] - '0') + (str[i-2] - '0')*10) % 4 == 0){
@@ -42,18 +46,20 @@ int div4(unsigned char* str){
 
 int main()
 {
-
-  //делится на 4
+    //пустая строка
+    //unsigned char P[1] = "\0";
+  
+    //делится на 4
     unsigned char P[LEN_P] = "1231214124\0";
 
   //не делится на 4
-  //  unsigned char P[LEN_P] = "1231214125\0";
+    //unsigned char P[LEN_P] = "1231214125\0";
 
   //не число
-  //  unsigned char P[LEN_P] = "123121412b\0";
+    //unsigned char P[LEN_P] = "123121412b\0";
 
   //русские символы
-  //  unsigned char P[LEN_P] = "1231214124а\0";
+    //unsigned char P[LEN_P] = "1231214124а\0";
 
     int res = div4(P);
 
