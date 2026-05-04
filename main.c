@@ -60,6 +60,7 @@ int main()
 {
 
     //unsigned char str[1] = "\0";
+    //unsigned char substr[1] = "\0";
 
     //unsigned char str[P_LEN] = "abcd bbc abф abc. abc\0";
     //unsigned char substr[W_LEN] = "aфc\0";
