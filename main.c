@@ -1,126 +1,91 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdlib.h>
 
-#define W_LEN 4 // 5
-#define P_LEN 27 // 23
-
-int find_substr(unsigned char* str, unsigned char* substr, int* len){
-
+int findWord(char* text, char* word)
+{
     int res = -2;
-
-    if (str != NULL && substr != NULL && len != NULL){
-
+    
+    if (text && word)
+    {
         res = -1;
 
-        int i = 0;
-        int j = 0;
-
-        bool flag = false;
-
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0' && substr[j] != '.') && !flag; i++){
-
-            if (str[i] > 127 || substr[j] > 127){
-                flag = true;
+        int Tab[127];
+        for (int i = 0; i < 127; i++)
+        {
+            Tab[i] = 1;
+            
+            if ('0' <= i && i <= '9')
+            {
+                Tab[i] = 0;
             }
-
-            if (str[i] == substr[j]){
-                j++;
+            if ('A' <= i && i <= 'Z')
+            {
+                Tab[i] = 0;
             }
-            else {
-                j = 0;
+            if ('a' <= i && i <= 'z')
+            {
+                Tab[i] = 0;
             }
-
         }
-
-        if (flag){
-
-            res = -2;
-
-        }
-        else{
-
-            if (substr[j] == '\0'){
-                
-                res = i;
-                res--;
-                
-            }
-
-        }
-
-        *len = j;
-
-    }
+        Tab[0] = 2;
+        Tab[33] = 2;
+        Tab[46] = 2;
+        Tab[63] = 2;
     
-    return res;
+        bool EndOfText = false;
+        bool wFound = false;
 
+        size_t i = 0;
+        size_t word_len = strlen(word);
+
+        while (!EndOfText && !wFound)
+        {
+            while (Tab[text[i]] == 1)
+            {
+                i++;
+            }
+            if (Tab[text[i]] == 2)
+            {
+                EndOfText = true;
+            }
+
+            int j = 0;
+            char buff[200] = {0};
+
+            while (Tab[text[i]] != 1 && Tab[text[i]] != 2)
+            {
+                buff[j] = text[i];
+                j++;
+                i++;
+            }
+            buff[j] = '\0';
+
+            if (!strcmp(word, buff))
+            {
+                res = i - word_len;
+                wFound = true;
+            }
+        }
+    }
+
+    return res;
 }
 
 int main()
 {
 
-    //unsigned char str[1] = "\0";
-    //unsigned char substr[1] = "\0";
-
-    //unsigned char str[P_LEN] = "abcd bbc abф abc. abc\0";
-    //unsigned char substr[W_LEN] = "aфc\0";
-
-    unsigned char str[P_LEN] = "abcd abcd bbc abc abc. abc\0";
-    unsigned char substr[W_LEN] = "abc\0";
-
-    //unsigned char substr[4] = "abc\0";
-
-    int len;
-
-    int i = 0;
-    int cnt = 0;
-    bool flag = false;
-
-    int res = find_substr(str, substr, &len);
+    char str[27] = "abcd abcd bbc abc acb. abc\0";
+    //char str[23] = "abcd abcd bbc abc. abc\0";
+    //char str[26] = "abc abcd bbc abc acb. abc\0";
+    //char str[5] = "abc\0";
     
-    int begin = res - len + 1;
-    int end = res;
+    char substr[4] = "abc\0";
 
-    if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.') && res != -1){
-        cnt++;
-    }
-    
-    while (res != -1 && !flag){
-   
-        if (res == -2){
-            flag = true;
-        }
+    int res = findWord(str, substr);
 
-        begin = res - len + 1 + i;
-        end = res + i;
-        
-        if (str[begin-1] == ' ' || str[end+1] == ' '){
-        
-            if (str[begin-1] == ' ' && str[end+1] == ' '){
-                cnt++;
-            }
-
-            if (begin == 0){
-                cnt++;
-            }
-
-            if (str[end+1] == '.' || str[end+1] == '\0'){
-                cnt++;
-            }
-
-        }
-
-        i = res + i;
-        res = find_substr(&str[i], substr, &len);
-
-    }
-
-    if (!flag){
-        printf("Words found: %d", cnt);
-    }
-    else{
-        printf("Non ascii or a NULL pointer");
-    }
+    printf("%d %c", res, str[res]);
 
     return 0;
 }
