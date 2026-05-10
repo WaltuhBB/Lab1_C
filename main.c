@@ -1,83 +1,70 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define LEN_P 11 //13
+#include <wchar.h>
 
-int div4(unsigned char* str){
-
+int divFour(wchar_t* str)
+{
     int res = -1;
 
-    if (str != NULL){
-
-        bool flag_num = true;
-
+    if (str)
+    {
+        res = 0;
+        
+        bool flagNum = true;
         int i;
 
-        for (i = 0; str[i] != '\0'; i++){
-
-            if (str[i] < '0' || str[i] > '9'){
-                flag_num = false;
+        for (i = 0; str[i] != L'\0'; i++)
+        {
+            if (str[i] < L'0' || str[i] > L'9')
+            {
+                flagNum = false;
             }
-
+        }
+        if (wcslen(str) == 0)
+        {
+            flagNum = false;
         }
 
-        if (i == 0){
-            flag_num = false;
-        }
-
-        if (flag_num){
-
-            if (((str[i-1] - '0') + (str[i-2] - '0')*10) % 4 == 0){
-
+        if (flagNum)
+        {
+            if (!( ((str[i-1] - L'0') + ((str[i-2] - L'0') * 10)) % 4 ))
+            {
                 res = 1;
-
             }
-            else{
-                res = 0;
-            }
-
         }
-
+        else
+        {
+            res = -1;
+        }
     }
 
     return res;
-
 }
 
 int main()
 {
-    //пустая строка
-    //unsigned char P[1] = "\0";
-  
-    //делится на 4
-    unsigned char P[LEN_P] = "1231214124\0";
+    //wchar_t str[1] = L"\0";
+    wchar_t str[11] = L"1231214124\0";
+    //wchar_t str[11] = L"1231214125\0";
+    //wchar_t str[11] = L"12312b4124\0";
 
-  //не делится на 4
-    //unsigned char P[LEN_P] = "1231214125\0";
+    int res = divFour(str);
 
-  //не число
-    //unsigned char P[LEN_P] = "123121412b\0";
-
-  //русские символы
-    //unsigned char P[LEN_P] = "1231214124а\0";
-
-    int res = div4(P);
-
-    //нулевой указатель
-    // int res = div(NULL);
-
-    if (res != -1){
-
-        if (res){
-            printf("You can devide this number by 4 ");
+    if (res != -1)
+    {
+        if (res)
+        {
+            printf("divisible\n");
         }
-        else{
-            printf("You can't devide this number by 4 ");
+        else
+        {
+            printf("not divisible\n");
         }
-
     }
-    else{
-        printf("String is not a number or the pointer is empty ");
+    else
+    {
+        printf("string is not a number or the pointer is empty\n");
     }
 
     return 0;
