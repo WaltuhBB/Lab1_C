@@ -87,13 +87,15 @@ int countWord(wchar_t* text, wchar_t* word)
 
 int main()
 {
+    setlocale(LC_ALL, "");
+    
     if (!TabInit)
     {
         InitTab();
     }
     
     wchar_t Wstr[27] = L"abcd abcd bbc abc abc. abc\0";
-    wchar_t Wsubstr[4] = L"abc\0";
+    //wchar_t Wstr[31] = L"abcd ффв abcd bbc abc abc. abc\0";
 
     int i = 0;
     bool EndOfText = false;
