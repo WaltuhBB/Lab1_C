@@ -6,6 +6,36 @@
 #include <locale.h>
 #include <wchar.h>
 
+static int Tab[65536];
+static bool TabInit = false;
+
+void initTab()
+{
+    for (int i = 0; i < 65536; i++)
+    {
+        if ((L'0' <= i && i <= L'9') ||
+            (L'A' <= i && i <= L'Z') ||
+            (L'a' <= i && i <= L'z') ||
+            (L'А' <= i && i <= L'Я') ||
+            (L'а' <= i && i <= L'я'))
+        {
+            Tab[i] = 0;
+        }
+        else
+        {
+            Tab[i] = 1;
+        }
+    }
+    Tab[L'ё'] = 0;
+    Tab[L'Ё'] = 0;
+    Tab[L'\0'] = 2;
+    Tab[L'.'] = 2;
+    Tab[L'?'] = 2;
+    Tab[L'!'] = 2;
+
+    TabInit = true;
+}
+
 int findWord(wchar_t* text, wchar_t* word)
 {
     int res = -2;
@@ -14,28 +44,10 @@ int findWord(wchar_t* text, wchar_t* word)
     {
         res = -1;
 
-        int Tab[65536];
-        for (int i = 0; i < 65536; i++)
+        if (!TabInit)
         {
-            if ((L'0' <= i && i <= L'9') ||
-                (L'A' <= i && i <= L'Z') ||
-                (L'a' <= i && i <= L'z') ||
-                (L'А' <= i && i <= L'Я') ||
-                (L'а' <= i && i <= L'я'))
-            {
-                Tab[i] = 0;
-            }
-            else
-            {
-                Tab[i] = 1;
-            }
+            initTab();
         }
-        Tab[L'ё'] = 0;
-        Tab[L'Ё'] = 0;
-        Tab[L'\0'] = 2;
-        Tab[L'.'] = 2;
-        Tab[L'?'] = 2;
-        Tab[L'!'] = 2;
     
         bool EndOfText = false;
         bool wFound = false;
