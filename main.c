@@ -1,206 +1,130 @@
 #include <stdio.h>
+#include <string.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
-#define LEN 34 //35
+#include <wchar.h>
+#include <locale.h>
 
-int find_substr(unsigned char* str, unsigned char* substr, int* len){
+static int Tab[65536];
+static bool TabInit = false;
 
-    int res = -2;
-
-    if (str != NULL && substr != NULL && len != NULL){
-
-        res = -1;
-
-        int i = 0;
-        int j = 0;
-
-        bool flag = false;
-
-        for (i = 0; (str[i] != '\0' && str[i] != '.') && (substr[j] != '\0' && substr[j] != '.') && !flag; i++){
-
-            if (str[i] > 127 || substr[j] > 127){
-                flag = true;
-            }
-
-            if (str[i] == substr[j]){
-                j++;
-            }
-            else {
-                j = 0;
-            }
-
+void InitTab()
+{
+    for (int i = 0; i < 65536; i++)
+    {
+        if ((L'0' <= i && i <= L'9') ||
+            (L'A' <= i && i <= L'Z') ||
+            (L'a' <= i && i <= L'z') ||
+            (L'А' <= i && i <= L'Я') ||
+            (L'а' <= i && i <= L'я'))
+        {
+            Tab[i] = 0;
         }
-
-        if (flag){
-
-            res = -2;
-
+        else
+        {
+            Tab[i] = 1;
         }
-        else{
-
-            if (substr[j] == '\0'){
-                
-                res = i;
-                res--;
-                
-            }
-
-        }
-
-        *len = j;
-
     }
-    
-    return res;
+    Tab[L'ё'] = 0;
+    Tab[L'Ё'] = 0;
+    Tab[L'\0'] = 2;
+    Tab[L'.'] = 2;
+    Tab[L'?'] = 2;
+    Tab[L'!'] = 2;
 
+    TabInit = true;
 }
 
-int count_words(unsigned char* str, unsigned char* substr){
-
-    int res = -2;
-
-    if (str != NULL && substr != NULL){
-
-        int len;
-
-        int i = 0;
-        int cnt = 0;
-        bool flag = false;
-
-        int res_f = find_substr(str, substr, &len);
+int countWord(wchar_t* text, wchar_t* word)
+{
+    int res = -1;
     
-        int begin = res_f - len + 1;
-        int end = res_f;
+    if (text && word)
+    {
+        res = 0;
 
-        if (begin == 0 && (str[end+1] == '\0' || str[end+1] == '.') && res != -1){
-            cnt++;
+        if (!TabInit)
+        {
+            InitTab();
         }
     
-        while (res_f != -1 && !flag){
-   
-            if (res_f == -2){
-                flag = true;
+        bool EndOfText = false;
+
+        size_t i = 0;
+
+        while (!EndOfText)
+        {
+            while (Tab[text[i]] == 1)
+            {
+                i++;
+            }
+            if (Tab[text[i]] == 2)
+            {
+                EndOfText = true;
             }
 
-            begin = res_f - len + 1 + i;
-            end = res_f + i;
-        
-            if (str[begin-1] == ' ' || str[end+1] == ' ' ||
-                str[begin-1] == ',' || str[end+1] == ','){
-        
-                bool bool_b = str[begin-1] == ' ' || str[begin-1] == ',';
-                bool bool_e = str[end+1] == ' ' || str[end+1] == ',';
-                
-                if (bool_b && bool_e){
-                    cnt++;
-                }
+            int j = 0;
+            wchar_t buff[200] = {0};
 
-                if (begin == 0){
-                    cnt++;
-                }
-
-                if (str[end+1] == '.' || str[end+1] == '\0'){
-                    cnt++;
-                }
-
+            while (Tab[text[i]] != 1 && Tab[text[i]] != 2)
+            {
+                buff[j] = text[i];
+                j++;
+                i++;
             }
+            buff[j] = L'\0';
 
-            i = res_f + i;
-            res_f = find_substr(&str[i], substr, &len);
-
+            if (!wcscmp(word, buff))
+            {
+                res++;
+            }
         }
-
-        if (!flag){
-            res = cnt;
-        }
-        else{
-            res = -2;
-        }
-
     }
 
     return res;
-
 }
 
 int main()
 {
-    unsigned char words[LEN] = "abc abc, bbc,ccb abc, abcd . ddc\0";
-    //unsigned char words[LEN] = "abc abc, bbc,ccb фbc, abcd . ddc\0";
-    //unsigned char words[1] = "\0";
-
-    int i = 0;
-    int j = 0;
-
-    unsigned char buffer[1000] = {0};
-
-    bool flag = false;
-    bool non_ascii = false;
-
-    while (!flag && !non_ascii){
-
-        if (words[i] == ' ' || words[i] == ',' || words[i] == '.' || words[i] == '\0'){
-
-            if (words[i] != '.' && words[i] != '\0'){
-                
-                buffer[j+1] = '\0';
-                j = 0;
-
-                int res = count_words(words, buffer);
-
-                if (res != -2){
-                    if (res == 1){
-                        printf("%s\n", buffer);
-                    }
-
-                    while (words[i] == ' ' || words[i] == ','){
-                        i++;
-
-                    }
-                }
-                else{
-                    non_ascii = true;
-                }
-
-            }
-            else{
-
-                if (words[i-1] != ' ' && words[i-1] != ','){
-
-                    buffer[j+1] = '\0';
-                    j = 0;
-                    
-                    int res = count_words(words, buffer);
-
-                    if (res != -2){
-                        if (res == 1){
-                            printf("%s\n", buffer);
-                        }
-                    }
-                    else{
-                        non_ascii = true;
-                    }
-                
-                }
-                
-                flag = true;
-
-            }
-
-        }
-        else{
-            buffer[j] = words[i];
-
-            i++;
-            j++;
-        }
-
-    }
-
-    if (non_ascii){
-        printf("Non ascii letters or a NULL pointer ");
+    if (!TabInit)
+    {
+        InitTab();
     }
     
-    return 0;
+    wchar_t Wstr[27] = L"abcd abcd bbc abc abc. abc\0";
+    wchar_t Wsubstr[4] = L"abc\0";
 
+    int i = 0;
+    bool EndOfText = false;
+
+    while (!EndOfText)
+    {
+        while (Tab[Wstr[i]] == 1)
+        {
+            i++;
+        }
+        if (Tab[Wstr[i]] == 2)
+        {
+            EndOfText = true;
+        }
+
+        int j = 0;
+        wchar_t buff[100] = {0};
+
+        while (Tab[Wstr[i]] != 1 && Tab[Wstr[i]] != 2)
+        {
+            buff[j] = Wstr[i];
+            j++;
+            i++;
+        }
+        buff[j] = L'\0';
+
+        if (countWord(Wstr, buff) == 1)
+        {
+            wprintf(L"%s\n", buff);
+        }
+    }
+
+    return 0;
 }
