@@ -3,42 +3,45 @@
 #include <string.h>
 #include <stdlib.h>
 
-int findWord(char* text, char* word)
+#include <locale.h>
+#include <wchar.h>
+
+int findWord(wchar_t* text, wchar_t* word)
 {
     int res = -2;
     
     if (text && word)
     {
-        res = -1;
+        res = -1;       
 
-        int Tab[127];
-        for (int i = 0; i < 127; i++)
+        int Tab[65536];
+        for (int i = 0; i < 65536; i++)
         {
-            Tab[i] = 1;
-            
-            if ('0' <= i && i <= '9')
+            if ((L'0' <= i && i <= L'9') ||
+                (L'A' <= i && i <= L'Z') ||
+                (L'a' <= i && i <= L'z') ||
+                (L'А' <= i && i <= L'Я') ||
+                (L'а' <= i && i <= L'я'))
             {
                 Tab[i] = 0;
             }
-            if ('A' <= i && i <= 'Z')
+            else
             {
-                Tab[i] = 0;
-            }
-            if ('a' <= i && i <= 'z')
-            {
-                Tab[i] = 0;
+                Tab[i] = 1;
             }
         }
+        Tab[L'ё'] = 0;
+        Tab[L'Ё'] = 0;
         Tab[0] = 2;
-        Tab[33] = 2;
-        Tab[46] = 2;
-        Tab[63] = 2;
+        Tab[L'.'] = 2;
+        Tab[L'?'] = 2;
+        Tab[L'!'] = 2;
     
         bool EndOfText = false;
         bool wFound = false;
 
         size_t i = 0;
-        size_t word_len = strlen(word);
+        size_t word_len = wcslen(word);
 
         while (!EndOfText && !wFound)
         {
@@ -52,7 +55,7 @@ int findWord(char* text, char* word)
             }
 
             int j = 0;
-            char buff[200] = {0};
+            wchar_t buff[200] = {0};
 
             while (Tab[text[i]] != 1 && Tab[text[i]] != 2)
             {
@@ -60,9 +63,9 @@ int findWord(char* text, char* word)
                 j++;
                 i++;
             }
-            buff[j] = '\0';
+            buff[j] = L'\0';
 
-            if (!strcmp(word, buff))
+            if (!wcscmp(word, buff))
             {
                 res = i - word_len;
                 wFound = true;
@@ -75,17 +78,19 @@ int findWord(char* text, char* word)
 
 int main()
 {
+    wchar_t Wstr[27] = L"abcd abcd bbc abc acb. abc\0";
+    //wchar_t Wstr[23] = L"abcd abcd bbc abc. abc\0";
+    //wchar_t Wstr[26] = L"abc abcd bbc abc acb. abc\0";
+    //wchar_t Wstr[4] = L"abc\0";
 
-    char str[27] = "abcd abcd bbc abc acb. abc\0";
-    //char str[23] = "abcd abcd bbc abc. abc\0";
-    //char str[26] = "abc abcd bbc abc acb. abc\0";
-    //char str[5] = "abc\0";
-    
-    char substr[4] = "abc\0";
+    wchar_t Wsubstr[4] = L"abc\0";
 
-    int res = findWord(str, substr);
+    //wchar_t Wstr[12] = L"abc ффв bфc\0";
+    //wchar_t Wsubstr[4] = L"ффв\0";
 
-    printf("%d %c", res, str[res]);
+    int res = findWord(Wstr, Wsubstr);
+
+    wprintf(L"%d %c", res, Wstr[res]);
 
     return 0;
 }
