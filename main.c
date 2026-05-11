@@ -6,48 +6,13 @@
 #include <wchar.h>
 #include <locale.h>
 
-static int Tab[65536];
-static bool TabInit = false;
-
-void InitTab()
-{
-    for (int i = 0; i < 65536; i++)
-    {
-        if ((L'0' <= i && i <= L'9') ||
-            (L'A' <= i && i <= L'Z') ||
-            (L'a' <= i && i <= L'z') ||
-            (L'А' <= i && i <= L'Я') ||
-            (L'а' <= i && i <= L'я'))
-        {
-            Tab[i] = 0;
-        }
-        else
-        {
-            Tab[i] = 1;
-        }
-    }
-    Tab[L'ё'] = 0;
-    Tab[L'Ё'] = 0;
-    Tab[L'\0'] = 2;
-    Tab[L'.'] = 2;
-    Tab[L'?'] = 2;
-    Tab[L'!'] = 2;
-
-    TabInit = true;
-}
-
-int countWord(wchar_t* text, wchar_t* word)
+int countWord(wchar_t* text, wchar_t* word, wchar_t* del)
 {
     int res = -1;
     
-    if (text && word)
+    if (text && word && del)
     {
         res = 0;
-
-        if (!TabInit)
-        {
-            InitTab();
-        }
     
         bool EndOfText = false;
 
@@ -55,11 +20,11 @@ int countWord(wchar_t* text, wchar_t* word)
 
         while (!EndOfText)
         {
-            while (Tab[text[i]] == 1)
+            while (wcschr(del, text[i]))
             {
                 i++;
             }
-            if (Tab[text[i]] == 2)
+            if (text[i] == L'.' || text[i] == L'\0')
             {
                 EndOfText = true;
             }
@@ -67,7 +32,7 @@ int countWord(wchar_t* text, wchar_t* word)
             int j = 0;
             wchar_t buff[200] = {0};
 
-            while (Tab[text[i]] != 1 && Tab[text[i]] != 2)
+            while (!wcschr(del, text[i]) && !(text[i] == L'.' || !text[i]))
             {
                 buff[j] = text[i];
                 j++;
@@ -89,11 +54,8 @@ int main()
 {
     setlocale(LC_ALL, "");
     
-    if (!TabInit)
-    {
-        InitTab();
-    }
-    
+    wchar_t delimetr[5] = L" -,:\0";
+
     wchar_t Wstr[27] = L"abcd abcd bbc abc abc. abc\0";
     //wchar_t Wstr[31] = L"abcd ффв abcd bbc abc abc. abc\0";
 
@@ -102,11 +64,11 @@ int main()
 
     while (!EndOfText)
     {
-        while (Tab[Wstr[i]] == 1)
+        while (wcschr(delimetr, Wstr[i]))
         {
             i++;
         }
-        if (Tab[Wstr[i]] == 2)
+        if (Wstr[i] == L'.' || Wstr[i] == L'\0')
         {
             EndOfText = true;
         }
@@ -114,7 +76,7 @@ int main()
         int j = 0;
         wchar_t buff[100] = {0};
 
-        while (Tab[Wstr[i]] != 1 && Tab[Wstr[i]] != 2)
+        while (!wcschr(delimetr, Wstr[i]) && !(Wstr[i] == L'.' || !Wstr[i]))
         {
             buff[j] = Wstr[i];
             j++;
@@ -122,7 +84,7 @@ int main()
         }
         buff[j] = L'\0';
 
-        if (countWord(Wstr, buff) == 1)
+        if (countWord(Wstr, buff, delimetr) == 1)
         {
             wprintf(L"%s\n", buff);
         }
