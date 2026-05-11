@@ -28,9 +28,19 @@ int divFour(wchar_t* str)
 
         if (flagNum)
         {
-            if (!( ((str[i-1] - L'0') + ((str[i-2] - L'0') * 10)) % 4 ))
+            if (wcslen(str) > 1)
             {
-                res = 1;
+                if (!( ((str[i-1] - L'0') + ((str[i-2] - L'0') * 10)) % 4 ))
+                {
+                    res = 1;
+                }
+            }
+            else
+            {
+                if ((str[0] - L'0') % 4 == 0)
+                {
+                    res = 1;
+                }
             }
         }
         else
@@ -46,6 +56,8 @@ int main()
 {
     //wchar_t str[1] = L"\0";
     wchar_t str[11] = L"1231214124\0";
+    //wchar_t str[3] = L"24\0";
+    //wchar_t str[2] = L"0\0";
     //wchar_t str[11] = L"1231214125\0";
     //wchar_t str[11] = L"12312b4124\0";
 
