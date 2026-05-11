@@ -6,48 +6,13 @@
 #include <locale.h>
 #include <wchar.h>
 
-static int Tab[65536];
-static bool TabInit = false;
-
-void initTab()
-{
-    for (int i = 0; i < 65536; i++)
-    {
-        if ((L'0' <= i && i <= L'9') ||
-            (L'A' <= i && i <= L'Z') ||
-            (L'a' <= i && i <= L'z') ||
-            (L'А' <= i && i <= L'Я') ||
-            (L'а' <= i && i <= L'я'))
-        {
-            Tab[i] = 0;
-        }
-        else
-        {
-            Tab[i] = 1;
-        }
-    }
-    Tab[L'ё'] = 0;
-    Tab[L'Ё'] = 0;
-    Tab[L'\0'] = 2;
-    Tab[L'.'] = 2;
-    Tab[L'?'] = 2;
-    Tab[L'!'] = 2;
-
-    TabInit = true;
-}
-
-int findWord(wchar_t* text, wchar_t* word)
+int findWord(wchar_t* text, wchar_t* word, wchar_t* del)
 {
     int res = -2;
     
-    if (text && word)
+    if (text && word && del)
     {
         res = -1;
-
-        if (!TabInit)
-        {
-            initTab();
-        }
     
         bool EndOfText = false;
         bool wFound = false;
@@ -57,11 +22,11 @@ int findWord(wchar_t* text, wchar_t* word)
 
         while (!EndOfText && !wFound)
         {
-            while (Tab[text[i]] == 1)
+            while (wcschr(del, text[i]))
             {
                 i++;
             }
-            if (Tab[text[i]] == 2)
+            if (text[i] == L'.' || text[i] == L'\0')
             {
                 EndOfText = true;
             }
@@ -69,7 +34,7 @@ int findWord(wchar_t* text, wchar_t* word)
             int j = 0;
             wchar_t buff[200] = {0};
 
-            while (Tab[text[i]] != 1 && Tab[text[i]] != 2)
+            while (!wcschr(del, text[i]) && !(text[i] == L'.' || !text[i]))
             {
                 buff[j] = text[i];
                 j++;
@@ -90,6 +55,8 @@ int findWord(wchar_t* text, wchar_t* word)
 
 int main()
 {
+    wchar_t delimetr[5] = L" -,:\0";
+    
     wchar_t Wstr[27] = L"abcd abcd bbc abc abc. abc\0";
     //wchar_t Wstr[23] = L"abcd abcd bbc abc. abc\0";
     //wchar_t Wstr[26] = L"abc abcd bbc abc acb. abc\0";
@@ -105,7 +72,7 @@ int main()
     int i = 0;
     size_t word_len = wcslen(Wsubstr);
     
-    int res = findWord(Wstr, Wsubstr);
+    int res = findWord(Wstr, Wsubstr, delimetr);
 
     if (res != -2)
     {
@@ -114,7 +81,7 @@ int main()
             cnt++;
 
             i = i + (res + word_len - 1);
-            res = findWord(&Wstr[i], Wsubstr);
+            res = findWord(&Wstr[i], Wsubstr, delimetr);
         }
 
         printf("Words found: %d\n", cnt);
