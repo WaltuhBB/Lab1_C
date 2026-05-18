@@ -1,48 +1,58 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
-#include <stdlib.h>
 
 #include <wchar.h>
 #include <locale.h>
 
-int countWord(wchar_t* text, wchar_t* word, wchar_t* del)
+int findWord(wchar_t* text, wchar_t* word, wchar_t* del)
 {
-    int res = -1;
+    int res = -2;
     
     if (text && word && del)
     {
-        res = 0;
+        res = -1;
     
         bool EndOfText = false;
+        bool wFound = false;
 
         size_t i = 0;
+        size_t word_len = wcslen(word);
 
-        while (!EndOfText)
+        while (!EndOfText && !wFound)
         {
-            while (wcschr(del, text[i]))
+            while (text[i] != L'\0' && wcschr(del, text[i]))
             {
                 i++;
             }
+            
             if (text[i] == L'.' || text[i] == L'\0')
             {
                 EndOfText = true;
             }
 
-            int j = 0;
-            wchar_t buff[200] = {0};
-
-            while (!wcschr(del, text[i]) && !(text[i] == L'.' || !text[i]))
+            size_t word_start = i;
+            while (text[i] != L'\0' && !wcschr(del, text[i]) && text[i] != L'.')
             {
-                buff[j] = text[i];
-                j++;
                 i++;
             }
-            buff[j] = L'\0';
 
-            if (!wcscmp(word, buff))
+            size_t word_end = i;
+            size_t current_word_len = word_end - word_start;
+
+            if (current_word_len == word_len)
             {
-                res++;
+                wchar_t tmp = text[word_end];
+                text[word_end] = L'\0';
+
+                int check = wcscmp(word, &text[word_start]);
+
+                text[word_end] = tmp;
+
+                if (!check)
+                {
+                    res = word_start;
+                    wFound = true;
+                }
             }
         }
     }
@@ -54,41 +64,74 @@ int main()
 {
     setlocale(LC_ALL, "");
     
-    wchar_t delimetr[5] = L" -,:\0";
-
     wchar_t Wstr[27] = L"abcd abcd bbc abc abc. abc\0";
-    //wchar_t Wstr[31] = L"abcd ффв abcd bbc abc abc. abc\0";
+    //wchar_t Wstr[5] = L"abcd\0";
+    //wchar_t Wstr[1] = L"\0";
 
-    int i = 0;
+    wchar_t delimetr[5] = L" -,:\0";
+    
+    int begin = 0;
+    int end = 0;
     bool EndOfText = false;
-
+    
     while (!EndOfText)
     {
-        while (wcschr(delimetr, Wstr[i]))
+        while (wcschr(delimetr, Wstr[begin]))
         {
-            i++;
+            begin++;
         }
-        if (Wstr[i] == L'.' || Wstr[i] == L'\0')
+        
+        end = begin;
+        
+        while (!wcschr(delimetr, Wstr[end]) &&
+                (Wstr[end] != L'.' && Wstr[end] != L'\0'))
+        {
+            end++;
+        }
+
+        if (begin == 0 && (Wstr[end] == L'.' || !Wstr[end]))
+        {
+            wprintf(L"%s\n", Wstr);
+        }
+        else
+        {
+            if (Wstr[end] == L'.' || !Wstr[end])
+            {
+                wchar_t tmp_l = Wstr[begin-1];
+                wchar_t tmp_r = Wstr[end];
+                Wstr[begin-1] = L'\0';
+                Wstr[end] = L'\0';
+
+                if (findWord(Wstr, &Wstr[begin], delimetr) == -1)
+                {
+                    wprintf(L"%s\n", &Wstr[begin]);
+                }
+
+                Wstr[begin-1] = tmp_l;
+                Wstr[end] = tmp_r;
+            }
+            else
+            {
+                wchar_t tmp_r = Wstr[end];
+                Wstr[end] = L'\0';
+
+                if (findWord(Wstr, &Wstr[begin], delimetr) == begin &&
+                    findWord(&Wstr[end+1], &Wstr[begin], delimetr) == -1)
+                {
+                    wprintf(L"%s\n", &Wstr[begin]);
+                }
+
+                Wstr[end] = tmp_r;
+            }
+        }
+        
+        if (Wstr[end] == L'.' || !Wstr[end])
         {
             EndOfText = true;
         }
 
-        int j = 0;
-        wchar_t buff[100] = {0};
-
-        while (!wcschr(delimetr, Wstr[i]) && !(Wstr[i] == L'.' || !Wstr[i]))
-        {
-            buff[j] = Wstr[i];
-            j++;
-            i++;
-        }
-        buff[j] = L'\0';
-
-        if (countWord(Wstr, buff, delimetr) == 1)
-        {
-            wprintf(L"%s\n", buff);
-        }
+        begin = end;
     }
-
+    
     return 0;
 }
