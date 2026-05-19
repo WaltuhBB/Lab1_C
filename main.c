@@ -6,11 +6,11 @@
 #include <locale.h>
 #include <wchar.h>
 
-int findWord(wchar_t* text, wchar_t* word, wchar_t* del)
+int findWord(wchar_t* text, wchar_t* word, wchar_t* delim)
 {
     int res = -2;
     
-    if (text && word && del)
+    if (text && word && delim)
     {
         res = -1;
     
@@ -22,7 +22,7 @@ int findWord(wchar_t* text, wchar_t* word, wchar_t* del)
 
         while (!EndOfText && !wFound)
         {
-            while (text[i] != L'\0' && wcschr(del, text[i]))
+            while (text[i] != L'\0' && wcschr(delim, text[i]))
             {
                 i++;
             }
@@ -33,7 +33,7 @@ int findWord(wchar_t* text, wchar_t* word, wchar_t* del)
             }
 
             size_t word_start = i;
-            while (text[i] != L'\0' && !wcschr(del, text[i]) && text[i] != L'.')
+            while (text[i] != L'\0' && !wcschr(delim, text[i]) && text[i] != L'.')
             {
                 i++;
             }
